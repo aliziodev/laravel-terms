@@ -17,6 +17,11 @@ class InstallCommand extends Command
 
         $this->publishConfig();
         $this->publishMigrations();
+        
+        if ($this->confirm('Would you like to publish the TermController?', true)) {    
+            $this->publishController();
+            $this->info('TermController published successfully.');  
+        }
 
         $this->info('Laravel Terms installed successfully.');
         $this->info('Please run "php artisan migrate" to create the required tables.');
@@ -64,5 +69,15 @@ class InstallCommand extends Command
         } else {
             $this->error('Migration stub not found.');
         }
+    }
+
+    protected function publishController()
+    {
+        $this->info('Publishing controller...');
+
+        $this->call('vendor:publish', [
+            '--provider' => 'Aliziodev\LaravelTerms\Providers\TermServiceProvider',
+            '--tag' => 'controller'
+        ]);
     }
 }
