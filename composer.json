@@ -1,0 +1,85 @@
+{
+    "name": "aliziodev/laravel-terms",
+    "description": "Laravel Terms is a flexible and powerful package for managing taxonomies, categories, tags, and other hierarchical terms in Laravel applications.",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "keywords": [
+        "laravel",
+        "terms",
+        "taxonomy",
+        "categories",
+        "tags",
+        "hierarchical",
+        "laravel-terms"
+    ],
+    "authors": [
+        {
+            "name": "Alizio",
+            "email": "aliziodev@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/contracts": "^9.0|^10.0|^11.0|^12.0",
+        "illuminate/database": "^9.0|^10.0|^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0",
+        "phpunit/phpunit": "^10.0",
+        "mockery/mockery": "^1.5",
+        "phpstan/phpstan": "^1.10",
+        "laravel/pint": "^1.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aliziodev\\LaravelTerms\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aliziodev\\LaravelTerms\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Aliziodev\\LaravelTerms\\Providers\\TermServiceProvider"
+            ],
+            "aliases": {
+                "Term": "Aliziodev\\LaravelTerms\\Facades\\Term"
+            }
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "format": "vendor/bin/pint",
+        "analyse": "vendor/bin/phpstan analyse",
+        "check": [
+            "@test",
+            "@analyse",
+            "@format"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/aliziodev"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/aliziodev/laravel-terms/issues",
+        "source": "https://github.com/aliziodev/laravel-terms"
+    }
+}
