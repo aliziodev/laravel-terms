@@ -160,11 +160,6 @@ return [
             'id', 'name', 'slug', 'type', 'parent_id', 
             'order', 'created_at', 'updated_at', 'deleted_at'
         ],
-        
-        // Default meta values for new terms
-        'defaults' => [
-            'meta' => [],
-        ],
     ],
 
     /*

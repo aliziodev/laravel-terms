@@ -407,10 +407,11 @@ class TermService implements TermInterface
         }
     }
 
-    public function paginate(int $perPage = 15)
+    public function paginate(int $perPage = 15, string $orderBy = 'order', string $direction = 'asc')
     {
-        return Term::orderBy('order')->paginate($perPage);
+        return Term::orderBy($orderBy, $direction)->paginate($perPage);
     }
+
 
     /**
      * Advanced Hierarchy Methods

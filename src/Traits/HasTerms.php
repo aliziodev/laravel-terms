@@ -6,7 +6,7 @@ use Aliziodev\LaravelTerms\Models\Term;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 
-trait HasTerms 
+trait HasTerms
 {
     /**
      * Basic Term Relations
@@ -45,18 +45,29 @@ trait HasTerms
     }
 
     /**
-     * Sync terms
+     * Sync terms by type
      * 
-     * @param array|Collection $terms
+     * @param array|int|string $terms Term IDs atau instances
+     * @param string|null $type Type dari term (category, tag, etc)
      */
-    public function syncTerms($terms): void
+    public function syncTerms($terms, ?string $type = null): void
     {
+        // Convert to array jika single value
+        $terms = is_array($terms) ? $terms : [$terms];
+
         $termIds = collect($terms)
             ->map(fn($term) => $this->getTermId($term))
             ->filter()
             ->all();
 
-        $this->terms()->sync($termIds);
+        if ($type) {
+            $this->terms()
+                ->whereIn('terms.id', $termIds)
+                ->sync($termIds);
+        } else {
+            // Sync all terms if no type specified
+            $this->terms()->sync($termIds);
+        }
     }
 
     /**
@@ -70,7 +81,7 @@ trait HasTerms
             ->map(fn($term) => $this->getTermId($term))
             ->filter()
             ->all();
-        
+
         if (!empty($termIds)) {
             $this->terms()->attach($termIds);
         }
@@ -96,7 +107,7 @@ trait HasTerms
             ->map(fn($term) => $this->getTermId($term))
             ->filter()
             ->all();
-        
+
         if (!empty($termIds)) {
             $this->terms()->detach($termIds);
         }
@@ -207,11 +218,11 @@ trait HasTerms
     public function countTerms(?string $type = null): int
     {
         $query = $this->terms();
-        
+
         if ($type) {
             $query->where('type', $type);
         }
-        
+
         return $query->count();
     }
 
@@ -303,11 +314,11 @@ trait HasTerms
     public function getTermsByMultipleMeta(array $meta): Collection
     {
         $query = $this->terms();
-        
+
         foreach ($meta as $key => $value) {
             $query->wherePivot("meta->{$key}", $value);
         }
-        
+
         return $query->get();
     }
 
@@ -329,16 +340,15 @@ trait HasTerms
     {
         if (($termId = $this->getTermId($term)) && ($targetId = $this->getTermId($targetTerm))) {
             $targetOrder = Term::where('id', $targetId)->value('order');
-            
+
             if ($targetOrder) {
                 // Increment order of terms after target
                 Term::where('order', '>=', $targetOrder)
                     ->increment('order');
-                
+
                 // Set new order for term
                 Term::where('id', $termId)
                     ->update(['order' => $targetOrder]);
-                
             }
         }
         return $this;
@@ -351,21 +361,20 @@ trait HasTerms
     {
         if (($termId = $this->getTermId($term)) && ($targetId = $this->getTermId($targetTerm))) {
             $targetOrder = Term::where('id', $targetId)->value('order');
-            
+
             if ($targetOrder) {
                 // Increment order of terms after target
                 Term::where('order', '>', $targetOrder)
                     ->increment('order');
-                
+
                 // Set new order for term
                 Term::where('id', $termId)
                     ->update(['order' => $targetOrder + 1]);
-    
             }
         }
         return $this;
     }
-    
+
     /**
      * Helper Methods
      */

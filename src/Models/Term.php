@@ -273,11 +273,6 @@ class Term extends Model
                 static::validateMetaKeys($term->meta);
             }
 
-            // Set default meta
-            if (config('terms.meta.enabled', true) && empty($term->meta)) {
-                $term->meta = config('terms.meta.defaults', []);
-            }
-
             // Check circular reference
             $term->preventCircularReference();
         });
