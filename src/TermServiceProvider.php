@@ -30,8 +30,14 @@ class TermServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerPublishables();
-        $this->registerCommands();
+        // Load migrations
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        
+        // Register publishables and commands
+        if ($this->app->runningInConsole()) {
+            $this->registerPublishables();
+            $this->registerCommands();
+        }
     }
 
     /**
@@ -39,10 +45,6 @@ class TermServiceProvider extends ServiceProvider
      */
     protected function registerPublishables(): void
     {
-        if (!$this->app->runningInConsole()) {
-            return;
-        }
-
         // Config
         $this->publishes([
             __DIR__ . '/../config/terms.php' => config_path('terms.php'),
@@ -55,7 +57,7 @@ class TermServiceProvider extends ServiceProvider
 
         // Controller
         $this->publishes([
-            __DIR__ . '/Http/Controllers/Term/TermController.php' => app_path('Http/Controllers/TermController.php'),
+            __DIR__ . '/Http/Controllers/Term/TermController.php' => app_path('Http/Controllers/Term/TermController.php'),
         ], 'terms-controller');
 
         // Requests
@@ -63,6 +65,15 @@ class TermServiceProvider extends ServiceProvider
             __DIR__ . '/Http/Requests/Term/StoreTermRequest.php' => app_path('Http/Requests/Term/StoreTermRequest.php'),
             __DIR__ . '/Http/Requests/Term/UpdateTermRequest.php' => app_path('Http/Requests/Term/UpdateTermRequest.php'),
         ], 'terms-requests');
+
+        // Publish all
+        $this->publishes([
+            __DIR__ . '/../config/terms.php' => config_path('terms.php'),
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
+            __DIR__ . '/Http/Controllers/Term/TermController.php' => app_path('Http/Controllers/Term/TermController.php'),
+            __DIR__ . '/Http/Requests/Term/StoreTermRequest.php' => app_path('Http/Requests/Term/StoreTermRequest.php'),
+            __DIR__ . '/Http/Requests/Term/UpdateTermRequest.php' => app_path('Http/Requests/Term/UpdateTermRequest.php'),
+        ], 'terms');
     }
 
     /**
@@ -70,10 +81,6 @@ class TermServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        if (!$this->app->runningInConsole()) {
-            return;
-        }
-
         $this->commands([
             InstallCommand::class,
         ]);
