@@ -1,6 +1,12 @@
 # LARAVEL TERMS PACKAGE
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/aliziodev/laravel-terms.svg?style=flat-square)](https://packagist.org/packages/aliziodev/laravel-terms)
+[![Total Downloads](https://img.shields.io/packagist/dt/aliziodev/laravel-terms.svg?style=flat-square)](https://packagist.org/packages/aliziodev/laravel-terms)
+[![PHP Version](https://img.shields.io/packagist/php-v/aliziodev/laravel-terms.svg?style=flat-square)](https://packagist.org/packages/aliziodev/laravel-terms)
+[![Laravel Version](https://img.shields.io/badge/Laravel-9.x-red?style=flat-square)](https://packagist.org/packages/aliziodev/laravel-terms)
+[![Laravel Version](https://img.shields.io/badge/Laravel-10.x-red?style=flat-square)](https://packagist.org/packages/aliziodev/laravel-terms)
+[![Laravel Version](https://img.shields.io/badge/Laravel-11.x-red?style=flat-square)](https://packagist.org/packages/aliziodev/laravel-terms)
+[![Laravel Version](https://img.shields.io/badge/Laravel-12.x-red?style=flat-square)](https://packagist.org/packages/aliziodev/laravel-terms)
 
-## Version 1.1.0
 
 Laravel Terms is a powerful and flexible package for managing taxonomies, categories, tags, and hierarchical terms in Laravel applications. It provides a robust solution for organizing content with features like metadata support, ordering capabilities, and efficient caching mechanisms.
 
@@ -220,3 +226,21 @@ Term::leaf();              // Get leaf terms
 10. Monitor cache usage
 
 For more detailed information, please check the source code or create an issue in the repository.
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security
+
+If you discover any security related issues, please email aliziodev@gmail.com instead of using the issue tracker.
+
+## Credits
+
+- [Alizio](https://github.com/aliziodev)
+- [All Contributors](../../contributors)
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
