@@ -10,6 +10,7 @@ use Aliziodev\LaravelTerms\Traits\{
     Slug,
     TermScope
 };
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property-read string $path Full path of the term
@@ -158,6 +159,15 @@ class Term extends Model
     public static function getValidTypes(): array
     {
         return config('terms.types', []);
+    }
+
+    /**
+     * Get ordered children
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('order', 'asc')
+            ->orderBy('name', 'asc');
     }
 
     /**
