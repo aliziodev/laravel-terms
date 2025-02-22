@@ -39,7 +39,7 @@ trait Slug
         // 1. Model is new (not in database)
         // 2. Slug is empty
         // 3. Name or slug has changed
-        return !$this->exists 
+        return !$this->exists
             || empty($this->slug)
             || $this->isDirty('name')
             || $this->isDirty('slug');
@@ -51,9 +51,22 @@ trait Slug
     protected function slugExists(string $slug): bool
     {
         $query = static::where('slug', $slug);
-        
+
+        // Exclude current record if exists
         if ($this->exists) {
             $query->where('id', '!=', $this->id);
+        }
+
+        // Check both active and soft deleted records
+        $query->withTrashed()
+            ->where(function ($q) {
+                $q->whereNull('deleted_at')
+                    ->orWhereNotNull('deleted_at');
+            });
+
+        // Check if slug exists with same type
+        if ($this->type) {
+            $query->where('type', $this->type);
         }
 
         return $query->exists();
