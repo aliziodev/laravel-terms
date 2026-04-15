@@ -18,6 +18,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # Uses GITHUB_TOKEN so @semantic-release/git can push CHANGELOG.md back.
+          # If main is branch-protected (requires PRs), replace with a PAT stored
+          # as a repo secret named GH_TOKEN and change token: below accordingly.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - uses: actions/setup-node@v4
         with:
