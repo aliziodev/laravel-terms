@@ -25,10 +25,10 @@ it('scopeSlug filters terms by slug', function (): void {
         ->and($result->first()->name)->toBe('Sale');
 });
 
-it('scopeOrdered sorts terms ascending by sort_order by default', function (): void {
-    Term::create(['name' => 'C', 'type' => TermType::Tag->value, 'slug' => 'c', 'sort_order' => 30]);
-    Term::create(['name' => 'A', 'type' => TermType::Tag->value, 'slug' => 'a', 'sort_order' => 10]);
-    Term::create(['name' => 'B', 'type' => TermType::Tag->value, 'slug' => 'b', 'sort_order' => 20]);
+it('scopeOrdered sorts terms ascending by order by default', function (): void {
+    Term::create(['name' => 'C', 'type' => TermType::Tag->value, 'slug' => 'c', 'order' => 30]);
+    Term::create(['name' => 'A', 'type' => TermType::Tag->value, 'slug' => 'a', 'order' => 10]);
+    Term::create(['name' => 'B', 'type' => TermType::Tag->value, 'slug' => 'b', 'order' => 20]);
 
     $names = Term::query()->ordered()->pluck('name')->all();
 
@@ -36,8 +36,8 @@ it('scopeOrdered sorts terms ascending by sort_order by default', function (): v
 });
 
 it('scopeOrdered accepts a direction', function (): void {
-    Term::create(['name' => 'A', 'type' => TermType::Tag->value, 'slug' => 'a', 'sort_order' => 10]);
-    Term::create(['name' => 'B', 'type' => TermType::Tag->value, 'slug' => 'b', 'sort_order' => 20]);
+    Term::create(['name' => 'A', 'type' => TermType::Tag->value, 'slug' => 'a', 'order' => 10]);
+    Term::create(['name' => 'B', 'type' => TermType::Tag->value, 'slug' => 'b', 'order' => 20]);
 
     $names = Term::query()->ordered('desc')->pluck('name')->all();
 

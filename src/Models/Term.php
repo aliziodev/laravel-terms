@@ -15,7 +15,8 @@ class Term extends Model
     protected function casts(): array
     {
         return [
-            'sort_order' => 'integer',
+            'order' => 'integer',
+            'meta' => 'array',
         ];
     }
 
@@ -70,14 +71,14 @@ class Term extends Model
     }
 
     /**
-     * Order terms by their sort_order column.
+     * Order terms by their order column.
      *
      * @example Term::query()->type('tag')->ordered()->get()
      * @example Term::query()->ordered('desc')->get()
      */
     public function scopeOrdered(Builder $query, string $direction = 'asc'): Builder
     {
-        return $query->orderBy('sort_order', $direction);
+        return $query->orderBy('order', $direction);
     }
 
     // -------------------------------------------------------------------------

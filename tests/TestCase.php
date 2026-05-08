@@ -18,19 +18,16 @@ abstract class TestCase extends BaseTestCase
 
         Model::preventLazyLoading(false);
 
-        // Remove any migration files published by a previous test so they don't
-        // run twice alongside the package's own loadMigrationsFrom() path.
-        foreach (glob(database_path('migrations/*_create_terms_tables.php')) ?: [] as $path) {
-            @unlink($path);
-        }
-
-        $this->artisan('migrate', ['--database' => 'testing'])->run();
-
         Schema::create('products', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
             $table->timestamps();
         });
+    }
+
+    protected function defineDatabaseMigrations(): void
+    {
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
     }
 
     protected function getPackageProviders($app): array

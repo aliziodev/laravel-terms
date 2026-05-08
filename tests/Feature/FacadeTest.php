@@ -25,10 +25,10 @@ it('facade findOrCreate returns the same term on repeated calls', function (): v
 
 it('facade findOrCreate accepts custom attributes', function (): void {
     $term = Terms::findOrCreate('Limited', TermType::Tag, [
-        'sort_order' => 5,
+        'order' => 5,
     ]);
 
-    expect($term->sort_order)->toBe(5);
+    expect($term->order)->toBe(5);
 });
 
 it('facade findOrCreateMany returns a collection of terms', function (): void {

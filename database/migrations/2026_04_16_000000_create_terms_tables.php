@@ -22,11 +22,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('type')->index();
-            $table->integer('sort_order')->default(0);
+            $table->integer('order')->default(0);
+            $table->json('meta')->nullable();
             $table->timestamps();
 
             $table->unique(['type', 'slug']);
-            $table->index(['type', 'sort_order']);
+            $table->index(['type', 'order']);
         });
 
         Schema::create($tableNames['termables'], function (Blueprint $table) use ($morphType, $tableNames): void {

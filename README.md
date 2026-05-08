@@ -18,7 +18,7 @@ Lightweight, flat taxonomy package for Laravel. Attach reusable terms — tags, 
 - **Auto slug generation** — slugs derived from names, unique per type
 - **`hasTerm()`** — fast boolean existence check without loading the relation
 - **`whereHasTerms()`** — scope for AND / OR multi-term filtering
-- **`Term::ordered()`** — scope to sort terms by `sort_order`
+- **`Term::ordered()`** — scope to order terms by `order`
 - **Minimal surface area** — manager, trait, one model, one migration
 
 ## Requirements
@@ -180,7 +180,7 @@ Terms::detach($product, ['red'], TermType::Color);
 Term::query()->type('tag')->get();
 Term::query()->slug('new-arrival')->first();
 
-// Sort by sort_order (asc by default)
+// Sort by order (asc by default)
 Term::query()->type('tag')->ordered()->get();
 Term::query()->ordered('desc')->get();
 ```
@@ -208,7 +208,7 @@ class Term extends \Aliziodev\LaravelTerms\Models\Term
 | Feature | laravel-terms | laravel-taxonomy |
 |---------|--------------|-----------------|
 | Hierarchy | None (flat) | Nested set / adjacency list |
-| Term ordering | `sort_order` column | Full tree ordering |
+| Term ordering | `order` column | Full tree ordering |
 | Pivot context | Yes | Varies |
 | Migration complexity | 2 tables | 2 tables |
 | Footprint | Minimal | Feature-rich |
