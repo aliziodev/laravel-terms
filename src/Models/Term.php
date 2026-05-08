@@ -24,36 +24,46 @@ class Term extends Model
     {
         static::creating(function (Term $term): void {
             if (blank($term->slug) && config('terms.slugs.generate', true)) {
-                $slug = str($term->name)->slug()->toString();
-
-                if (blank($slug)) {
-                    throw new \InvalidArgumentException(
-                        "Cannot generate a slug from term name [{$term->name}]. Provide an explicit slug."
-                    );
-                }
-
-                $term->slug = $slug;
+                $term->slug = self::generateSlugFromName($term->name);
             }
         });
 
         static::updating(function (Term $term): void {
+            if (! config('terms.slugs.generate', true)) {
+                return;
+            }
+
+            // Guard 1: regenerate slug when name changes and regenerate_on_update is enabled.
+            // Only runs when the user did not explicitly change the slug themselves.
             if (
                 $term->isDirty('name')
-                && blank($term->slug)
-                && config('terms.slugs.generate', true)
+                && ! $term->isDirty('slug')
                 && config('terms.slugs.regenerate_on_update', false)
             ) {
-                $slug = str($term->name)->slug()->toString();
+                $term->slug = self::generateSlugFromName($term->name);
 
-                if (blank($slug)) {
-                    throw new \InvalidArgumentException(
-                        "Cannot generate a slug from term name [{$term->name}]. Provide an explicit slug."
-                    );
-                }
+                return;
+            }
 
-                $term->slug = $slug;
+            // Guard 2: never allow saving a blank slug, regardless of regenerate_on_update.
+            // Generates from the current name if the slug was cleared.
+            if (blank($term->slug)) {
+                $term->slug = self::generateSlugFromName($term->name);
             }
         });
+    }
+
+    private static function generateSlugFromName(string $name): string
+    {
+        $slug = str($name)->slug()->toString();
+
+        if (blank($slug)) {
+            throw new \InvalidArgumentException(
+                "Cannot generate a slug from term name [{$name}]. Provide an explicit slug."
+            );
+        }
+
+        return $slug;
     }
 
     // -------------------------------------------------------------------------

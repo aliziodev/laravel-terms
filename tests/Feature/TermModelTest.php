@@ -25,16 +25,16 @@ it('keeps an explicit slug when it is provided', function (): void {
     expect($term->slug)->toBe('custom-slug');
 });
 
-it('regenerates slug on update when enabled and slug is blank', function (): void {
+it('regenerates slug on update when name changes and regenerate_on_update is enabled', function (): void {
     config()->set('terms.slugs.regenerate_on_update', true);
 
     $term = Term::create([
         'name' => 'Fresh Arrival',
         'type' => TermType::Tag->value,
-        'slug' => '',
     ]);
 
-    $term->slug = '';
+    expect($term->slug)->toBe('fresh-arrival');
+
     $term->name = 'Updated Arrival';
     $term->save();
 
@@ -47,7 +47,6 @@ it('does not regenerate slug on update when regenerate_on_update is false', func
     $term = Term::create([
         'name' => 'Fresh Arrival',
         'type' => TermType::Tag->value,
-        'slug' => '',
     ]);
 
     $original = $term->slug;
@@ -56,6 +55,22 @@ it('does not regenerate slug on update when regenerate_on_update is false', func
     $term->save();
 
     expect($term->slug)->toBe($original);
+});
+
+it('does not regenerate slug when user explicitly provides a new slug on update', function (): void {
+    config()->set('terms.slugs.regenerate_on_update', true);
+
+    $term = Term::create([
+        'name' => 'Fresh Arrival',
+        'type' => TermType::Tag->value,
+    ]);
+
+    $term->name = 'Updated Arrival';
+    $term->slug = 'my-custom-slug';
+    $term->save();
+
+    // slug eksplisit user dipakai, bukan auto-generated
+    expect($term->slug)->toBe('my-custom-slug');
 });
 
 it('throws when slug cannot be generated from a non-sluggable name on create', function (): void {
@@ -72,10 +87,8 @@ it('throws when slug cannot be generated from a non-sluggable name on update', f
     $term = Term::create([
         'name' => 'Valid Name',
         'type' => TermType::Tag->value,
-        'slug' => '',
     ]);
 
-    $term->slug = '';      // clear slug to trigger regeneration
     $term->name = '!!!';   // non-sluggable
     $term->save();
 })->throws(InvalidArgumentException::class);
