@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/aliziodev/laravel-terms/compare/v1.1.1...v1.1.2) (2026-05-08)
+
+### Bug Fixes
+
+* implement TermsManager for flexible term synchronization, attachment, and detachment support ([cc9337a](https://github.com/aliziodev/laravel-terms/commit/cc9337a62aa6367a070ca9e2d4f2cde9e3d4d7fb))
+
 ## [1.1.1](https://github.com/aliziodev/laravel-terms/compare/v1.1.0...v1.1.1) (2026-05-08)
 
 ### Bug Fixes
