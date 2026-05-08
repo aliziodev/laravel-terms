@@ -35,33 +35,49 @@ class TermsManager implements TermsManagerInterface
         $type = $this->normalizeType($type);
 
         return collect($names)
-            ->filter(fn ($name): bool => filled($name))
-            ->map(fn ($name): Term => $this->findOrCreate((string) $name, $type));
+            ->filter(fn ($name): bool => filled($name) || $name instanceof Term)
+            ->map(function ($name) use ($type): Term {
+                if ($name instanceof Term) {
+                    return $name;
+                }
+
+                if (is_numeric($name)) {
+                    $term = $this->termModel()->newQuery()
+                        ->where('type', $type)
+                        ->find($name);
+
+                    if ($term) {
+                        return $term;
+                    }
+                }
+
+                return $this->findOrCreate((string) $name, $type);
+            });
     }
 
-    public function attach(Model $model, array $names, TermType|string $type, ?string $context = null): void
+    public function attach(Model $model, array $terms, TermType|string $type, ?string $context = null): void
     {
-        $terms = $this->findOrCreateMany($names, $type);
+        $termModels = $this->findOrCreateMany($terms, $type);
 
         if ($context === null) {
             // syncWithoutDetaching deduplicates by term_id — correct for null-context.
             // INSERT OR IGNORE cannot be used here because SQL UNIQUE constraints treat
             // each NULL as distinct, so the same row can be inserted multiple times.
             $model->terms()->syncWithoutDetaching(
-                $terms->mapWithKeys(fn (Term $term): array => [
+                $termModels->mapWithKeys(fn (Term $term): array => [
                     $term->getKey() => ['context' => null],
                 ])->all()
             );
         } else {
-            $this->insertPivotRows($model, $terms, $context);
+            $this->insertPivotRows($model, $termModels, $context);
         }
     }
 
-    public function sync(Model $model, array $names, TermType|string $type, ?string $context = null): void
+    public function sync(Model $model, array $terms, TermType|string $type, ?string $context = null): void
     {
         $type = $this->normalizeType($type);
-        $terms = $this->findOrCreateMany($names, $type);
-        $newTermIds = $terms->map(fn (Term $term) => $term->getKey())->all();
+        $termModels = $this->findOrCreateMany($terms, $type);
+        $newTermIds = $termModels->map(fn (Term $term) => $term->getKey())->all();
         $termsTable = $this->termModel()->getTable();
 
         // Use the raw query builder rather than the Eloquent relation to avoid
@@ -85,24 +101,24 @@ class TermsManager implements TermsManagerInterface
 
         if ($context === null) {
             $model->terms()->syncWithoutDetaching(
-                $terms->mapWithKeys(fn (Term $term): array => [
+                $termModels->mapWithKeys(fn (Term $term): array => [
                     $term->getKey() => ['context' => null],
                 ])->all()
             );
         } else {
-            $this->insertPivotRows($model, $terms, $context);
+            $this->insertPivotRows($model, $termModels, $context);
         }
     }
 
     public function detach(
         Model $model,
-        array $names = [],
+        array $terms = [],
         TermType|string|null $type = null,
         ?string $context = null,
     ): void {
         $type = $type === null ? null : $this->normalizeType($type);
 
-        if ($names === [] && $type === null) {
+        if ($terms === [] && $type === null) {
             $this->deletePivotRows($model, [], $context);
 
             return;
@@ -114,11 +130,29 @@ class TermsManager implements TermsManagerInterface
             $termQuery->where('type', $type);
         }
 
-        if ($names !== []) {
-            $slugs = collect($names)
-                ->map(fn ($name): string => str((string) $name)->slug()->toString())
-                ->all();
-            $termQuery->whereIn('slug', $slugs);
+        if ($terms !== []) {
+            $ids = [];
+            $slugs = [];
+
+            foreach ($terms as $term) {
+                if ($term instanceof Term) {
+                    $ids[] = $term->getKey();
+                } elseif (is_numeric($term)) {
+                    $ids[] = $term;
+                } else {
+                    $slugs[] = str((string) $term)->slug()->toString();
+                }
+            }
+
+            if ($ids !== [] && $slugs !== []) {
+                $termQuery->where(function ($query) use ($ids, $slugs) {
+                    $query->whereIn('id', $ids)->orWhereIn('slug', $slugs);
+                });
+            } elseif ($ids !== []) {
+                $termQuery->whereIn('id', $ids);
+            } elseif ($slugs !== []) {
+                $termQuery->whereIn('slug', $slugs);
+            }
         }
 
         $termIds = $termQuery->pluck('id')->all();

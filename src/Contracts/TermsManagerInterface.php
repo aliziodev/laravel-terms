@@ -13,23 +13,23 @@ interface TermsManagerInterface
 {
     public function findOrCreate(string $name, TermType|string $type, array $attributes = []): Term;
 
-    public function findOrCreateMany(array $names, TermType|string $type): Collection;
+    public function findOrCreateMany(array $terms, TermType|string $type): Collection;
 
-    public function attach(Model $model, array $names, TermType|string $type, ?string $context = null): void;
+    public function attach(Model $model, array $terms, TermType|string $type, ?string $context = null): void;
 
-    public function sync(Model $model, array $names, TermType|string $type, ?string $context = null): void;
+    public function sync(Model $model, array $terms, TermType|string $type, ?string $context = null): void;
 
     /**
      * Detach terms from a model.
      *
-     * - Pass $names to remove specific terms (matched by slug).
+     * - Pass $terms to remove specific terms (matched by slug or ID).
      * - Pass $type to restrict removal to one type.
      * - Pass $context to restrict removal to one pivot context only.
      * - Pass nothing to remove all pivot rows for the model.
      */
     public function detach(
         Model $model,
-        array $names = [],
+        array $terms = [],
         TermType|string|null $type = null,
         ?string $context = null,
     ): void;

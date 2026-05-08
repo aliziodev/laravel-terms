@@ -35,16 +35,16 @@ trait HasTerms
     // Mutators (chainable)
     // -------------------------------------------------------------------------
 
-    public function syncTerms(array $names, TermType|string $type, ?string $context = null): static
+    public function syncTerms(array $terms, TermType|string $type, ?string $context = null): static
     {
-        app('terms')->sync($this, $names, $type, $context);
+        app('terms')->sync($this, $terms, $type, $context);
 
         return $this;
     }
 
-    public function attachTerms(array $names, TermType|string $type, ?string $context = null): static
+    public function attachTerms(array $terms, TermType|string $type, ?string $context = null): static
     {
-        app('terms')->attach($this, $names, $type, $context);
+        app('terms')->attach($this, $terms, $type, $context);
 
         return $this;
     }
@@ -52,14 +52,14 @@ trait HasTerms
     /**
      * Detach terms from this model.
      *
-     * - Pass $names to remove specific terms.
+     * - Pass $terms to remove specific terms.
      * - Pass $type to restrict removal to one type.
      * - Pass $context to restrict removal to one pivot context.
      * - Pass nothing to remove all terms.
      */
-    public function detachTerms(array $names = [], TermType|string|null $type = null, ?string $context = null): static
+    public function detachTerms(array $terms = [], TermType|string|null $type = null, ?string $context = null): static
     {
-        app('terms')->detach($this, $names, $type, $context);
+        app('terms')->detach($this, $terms, $type, $context);
 
         return $this;
     }
