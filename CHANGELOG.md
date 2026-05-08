@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/aliziodev/laravel-terms/compare/v1.1.0...v1.1.1) (2026-05-08)
+
+### Bug Fixes
+
+* implement Term model with automated slug generation and associated feature tests ([b8b2ce1](https://github.com/aliziodev/laravel-terms/commit/b8b2ce1b557595b916cf3f0ad0b7eb065fb21dfb))
+
 ## [1.1.0](https://github.com/aliziodev/laravel-terms/compare/v1.0.0...v1.1.0) (2026-05-08)
 
 ### Features
